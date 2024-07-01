@@ -6,16 +6,10 @@
 #
 
 # Inherit from those products. Most specific first.
-$(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit.mk)
-
-# Inherit full configuration for nx.
-include device/nintendo/nx/lineage.mk    
+$(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit.mk)   
 
 # Inherit some common twrp stuff.
 $(call inherit-product, vendor/twrp/config/common.mk)
-
-# Inherit device configuration for nx.
-$(call inherit-product, device/nintendo/nx/device.mk)
 
 # Inherit from nx_tab device
 $(call inherit-product, device/nintendo/nx_tab/device.mk)
