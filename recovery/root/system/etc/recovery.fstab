@@ -1,15 +1,32 @@
-/system         ext4     system                                          flags=display=system;logical
-/system_ext     ext4     system_ext                                      flags=display=system_ext;logical
-/vendor         ext4     vendor                                          flags=display=vendor;logical
-/odm            ext4     odm                                             flags=display=odm;logical
-/product        ext4     product                                         flags=display=product;logical
-/boot           emmc     /dev/block/by-name/boot                         flags=display=boot
-/recovery       emmc     /dev/block/by-name/recovery                     flags=display=recovery
-/cache          ext4     /dev/block/by-name/cache                        flags=display=cache
-/data           ext4     /dev/block/by-name/userdata                     flags=display=data
-/misc           emmc     /dev/block/by-name/misc                         flags=display=misc
-auto            vfat     /devices/sdhci-tegra.0/mmc_host*                flags=display=auto
-auto            auto     /devices/70090000.xusb/usb*                     flags=display=auto
-/sdcard         vfat     /dev/block/platform/sdhci-tegra.0/by-num/p1     flags=display=sdcard
-/usbdrive       auto     /dev/block/platform/70090000.xusb/by-num/p1     flags=display=usbdrive
-none            swap     /dev/block/zram0                                flags=display=none
+# Copyright (c) 2024 Thomas Makin
+# Android fstab for Nintendo Switch devices using dynamic partitioning scheme
+# Does not support metadata encryption
+
+#<src>                                                  <mnt_point>         <type>      <mnt_flags>                                                         <fs_mgr_flags>
+
+# dynamic partitions (in super)
+system                                                  /system             ext4        ro,noatime,barrier=1                                                wait,logical,first_stage_mount
+system_ext                                              /system_ext         ext4        ro,noatime,barrier=1                                                wait,logical,first_stage_mount
+vendor                                                  /vendor             ext4        ro,noatime,barrier=1                                                wait,logical,first_stage_mount
+odm                                                     /odm                ext4        ro,noatime,barrier=1                                                wait,logical,first_stage_mount
+product                                                 /product            ext4        ro,noatime,barrier=1                                                wait,logical,first_stage_mount
+
+# kernel
+/dev/block/by-name/boot                                 /boot               emmc        defaults                                                            defaults
+/dev/block/by-name/recovery                             /recovery           emmc        defaults                                                            defaults
+
+# data & misc
+/dev/block/by-name/cache                                /cache              ext4        noatime,nosuid,nodev,data=ordered,barrier=1,nodelalloc              wait,formattable
+/dev/block/by-name/userdata                             /data               ext4        noatime,nosuid,nodev,data=ordered,barrier=0,noauto_da_alloc         wait,check,formattable,quota,reservedsize=128M
+/dev/block/by-name/misc                                 /misc               emmc        defaults                                                            defaults
+
+# devices (normal)
+/devices/sdhci-tegra.0/mmc_host*                        auto                vfat        defaults                                                            voldmanaged=sdcard1:1
+/devices/70090000.xusb/usb*                             auto                auto        defaults                                                            voldmanaged=usbdrive:auto
+
+# devices (recovery)
+/dev/block/platform/sdhci-tegra.0/by-num/p1             /sdcard             vfat        defaults                                                            recoveryonly
+/dev/block/platform/70090000.xusb/by-num/p1             /usbdrive           auto        defaults                                                            recoveryonly
+
+# zram
+/dev/block/zram0                                        none                swap        defaults                                                            zramsize=50%
