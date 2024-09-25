@@ -17,3 +17,7 @@ import init.recovery.usb.rc
 on init
     setprop ro.minui.default_rotation "ROTATION_LEFT"
     setprop persist.twrp.rotation 270
+
+on fs
+    mount_all /vendor/etc/fstab.nx
+    swapon_all /vendor/etc/fstab.nx
