@@ -16,3 +16,4 @@ import init.recovery.usb.rc
 
 on init
     setprop ro.minui.default_rotation "ROTATION_LEFT"
+    setprop persist.twrp.rotation 270
